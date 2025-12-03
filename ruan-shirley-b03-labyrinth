@@ -1,0 +1,81 @@
+from collections import deque
+
+n, m = map(int, input().split())
+grid = []
+ax,ay = 0,0 # this is where a is hehe
+
+
+for r in range(n):
+    row = input()
+    formattedRow = [] 
+
+    for c in row:
+        if c == "A":
+            ax = r
+            ay = c
+        formattedRow.append(c)
+
+    grid.append(formattedRow)
+
+dy = [-1, 1, 0, 0]
+dx = [0, 0, -1, 1]
+
+def neighbors(vx,vy):
+    ans = []
+    for i in range(4):
+        newCoords = ( vy+dy[i] , vx+dx[i] )
+        ans.append(newCoords)
+    return ans
+
+def whichDir(i):
+    ans = ""
+    if i==1:
+        ans = "U"
+    elif i==2:
+        ans = "D"
+    elif i==3:
+        ans = "L"
+    else:
+        ans = "R"
+    
+    return ans
+
+def bfs():
+    dirString = ""
+    work = deque()
+    paths = [ [""] * m for i in range(n) ]
+    seen = [ [False] * m for i in range(n) ]
+    done = [ [False] * m for i in range(n) ]
+    seen[ax][ay] = True
+
+    work.append((ax,ay))
+
+    while work:
+        currx, curry = work.pop()
+        ns = neighbors(currx, curry)
+
+        for i in range(4):
+            currNeighbor = cnx, cny = ns[i]
+            seen[cnx][cny] = True
+
+            if seen[currNeighbor]:
+                continue
+
+            dir = whichDir(i)
+            if n=="B":
+                dirString = paths[cnx][cny].append(dir)
+                break
+            elif n==".":
+                paths[cnx, cny].append(dir)
+
+    dirLen = len(dirString)
+    doesItWork = "YES"
+
+    if dirLen==0:
+        doesItWork = "NO"
+
+    print(doesItWork)
+    print(dirLen)
+    print(dirString)
+
+bfs()

@@ -1,0 +1,31 @@
+import heapq
+from collections import defaultdict
+
+# init n cities and m roads
+n,m = map(int, input().split())
+roads = defaultdict(set)
+costs = defaultdict(int)
+
+# init association list of city nodes
+# and repair costs of each road
+for x in range(m):
+    a, b, c = map(int, input().split())
+    roads[a].add(b)
+    roads[b].add(a)
+    costs[(a,b)] = c
+    costs[(b,a)] = c # why do you why
+
+first = roads[0]
+
+# iterative dfs using priority queue (min heap) for prim's
+def dfs():
+    discovered = [False] * n
+    pq = []
+    heapq.heappush(0)
+
+    # while pq:
+        
+
+
+    # return pq
+

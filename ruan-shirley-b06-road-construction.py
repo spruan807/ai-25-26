@@ -1,75 +1,118 @@
-from collections import defaultdict
 
-n,m  = map(int, input().split())
 
+############### INITIALIZE VARIABLES ############### 
+
+### VARIABLES PT 1 ###
 roads = []
-maxSize = -1
-seen = [False] * (n+1)
 ans = []
 
+### STRING VER ###
+
+# stringInput = """10 20
+# 9 5
+# 9 6
+# 5 9
+# 8 10
+# 5 3
+# 5 2
+# 10 8
+# 10 7
+# 5 9
+# 10 9
+# 10 9
+# 1 5
+# 9 5
+# 2 10
+# 10 7
+# 6 9
+# 10 8
+# 3 1
+# 10 9
+# 9 2"""
+
+# splitInput = stringInput.split("\n")
+# n,m = map(int, splitInput[0].split())
+
+# for x in splitInput[1:]:
+#     a,b = map(int, x.split())
+#     roads.append((a,b))
+
+### INPUT VER ##
+
+n,m  = map(int, input().split()) # input
+
 for x in range(m):
-    a,b = map(int, input().split())
+    a,b = map(int, input().split()) # input ver
     roads.append((a,b))
 
-def default(val):
-    return lambda: val
+### VARIABLES PT 2 ###
+global ncomponents 
+ncomponents = n
 
-unionfind = defaultdict(int)
-sizes = defaultdict(default(1))
-
-for x in range(n):
-    unionfind[x+1] = x+1
-    sizes[x+1] = 1
-
-def bigboss(a,b,m):
-    ogboss = unionfind[b]
-
-    while ogboss != unionfind[ogboss]:
-        ogboss = unionfind[ogboss]
-
-    while unionfind[a] != a:
-        a = unionfind[a] # this won't error right...
-    
-    if ogboss == a:
-        return m
-
-    unionfind[b] = a
-    popped = sizes.pop(ogboss,-1)
-
-    if popped!=-1:
-        sizes[a] += popped 
-    else:
-        sizes[a] += 1
-
-    if sizes[a] > m:
-        m = sizes[a]
-
-    # print(f"boss is {a} and minion is {b}")
-    # print(f"og boss is {ogboss}")
-    # goodPrint(unionfind)
-    # goodPrint(sizes)
-    
-    return m
+bosses = [ x for x in range(n+1) ]
+sizes = [1]*(n+1)
+maxSize = -1
 
 def goodPrint(d): # sum the printing
     bigOlString = "{"
-    for (k,v) in d.items():
-        bigOlString += f"{k}:{v}, "
+    for n in range(len(d)):
+        bigOlString += f"{n}:{d[n]}, "
 
     print(bigOlString + "}")
 
+def find(v):
+    parent = bosses[v]
+    if v == parent:
+        return v
+    bosses[v] = find(parent)
+
+    return bosses[v]
+
+def union(a,b):
+    global ncomponents
+    
+    ap = find(a)
+    bp = find(b)
+
+    bossSize = -1
+
+    if ap!=bp:
+        ncomponents -= 1
+
+        if sizes[ap] > sizes[bp]:
+            sizes[ap] += sizes[bp]
+            bosses[bp] = ap
+            bossSize = sizes[ap]
+        else:
+            sizes[bp] += sizes[ap]
+            bosses[ap] = bp
+            bossSize = sizes[bp]
+
+    # print(f"a is {a}")
+    # print(f"b is {b}")
+    # print(f"a boss is {ap}")
+    # print(f"b boss is {bp}")
+    # print(f"a size is {sizes[ap]}")
+    # print(f"b size is {sizes[bp]}")
+    # print(f"new boss size is {bossSize}")
+    # print("bosses are")
+    # goodPrint(bosses)
+    # print("sizes are")
+    # goodPrint(sizes)
+
+    return bossSize
+
 for (a,b) in roads:
+    newSize = union(a,b)
 
-    if seen[a] and not seen[b]:
-        maxSize = bigboss(a,b,maxSize)
-    else: 
-        maxSize = bigboss(b,a,maxSize)
+    if maxSize < newSize:
+        maxSize = newSize
 
-    seen[a] = True
-    seen[b] = True
-    ans.append(f"{len(sizes)} {maxSize}")
+    newline = f"{ncomponents} {maxSize}"
+    ans.append(newline)
 
 out = "\n".join(ans)
 print(out)
+
     
 

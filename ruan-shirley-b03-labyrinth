@@ -1,81 +1,116 @@
 from collections import deque
 
+
+############ INPUT ############
 n, m = map(int, input().split())
 grid = []
-ax,ay = 0,0 # this is where a is hehe
-
+ax,ay = 0,0 # initializing a 
 
 for r in range(n):
-    row = input()
+    currRow = input()
     formattedRow = [] 
 
-    for c in row:
-        if c == "A":
-            ax = r
+    for c in range(m):
+        currCell = currRow[c]
+        if currCell == "A":
+            ax = r # yes, x is vertical
             ay = c
-        formattedRow.append(c)
+        formattedRow.append(currCell)
 
     grid.append(formattedRow)
 
-dy = [-1, 1, 0, 0]
-dx = [0, 0, -1, 1]
+############ HELPERS ############
+dy = [0, 0, -1, 1]
+dx = [-1, 1, 0, 0]
 
-def neighbors(vx,vy):
+def neighbors(v):
+    vx, vy = v
     ans = []
     for i in range(4):
-        newCoords = ( vy+dy[i] , vx+dx[i] )
+        newCoords = ( vx+dx[i], vy+dy[i] )
         ans.append(newCoords)
     return ans
 
 def whichDir(i):
     ans = ""
-    if i==1:
+    if i==0:
         ans = "U"
-    elif i==2:
+    elif i==1:
         ans = "D"
-    elif i==3:
+    elif i==2:
         ans = "L"
     else:
         ans = "R"
     
     return ans
 
-def bfs():
-    dirString = ""
+def goodPrint(a):
+    for r in a:
+        print(r)
+
+############ BFS ############
+def findPath():
+    bestPath = ""
+    bestLen = 1000*1000
     work = deque()
-    paths = [ [""] * m for i in range(n) ]
     seen = [ [False] * m for i in range(n) ]
     done = [ [False] * m for i in range(n) ]
     seen[ax][ay] = True
 
-    work.append((ax,ay))
+    work.append( ( (ax,ay) , "" ) )
 
     while work:
-        currx, curry = work.pop()
-        ns = neighbors(currx, curry)
+        currNode, currPath = work.pop()
+        ns = neighbors(currNode)
+        
+        # print(f"curr is {currNode}, or {grid[currNode[0]][currNode[1]]}, with path {currPath}")
+        # print(f"neighbors are {ns}")
+        # print(f"seen is ")
+        # goodPrint(seen)
 
         for i in range(4):
-            currNeighbor = cnx, cny = ns[i]
-            seen[cnx][cny] = True
-
-            if seen[currNeighbor]:
+            cnx, cny = ns[i]
+            
+            if cnx<0 or cny<0 or cnx>=n or cny>=m or seen[cnx][cny]:
                 continue
 
+            nChar = grid[cnx][cny]
             dir = whichDir(i)
-            if n=="B":
-                dirString = paths[cnx][cny].append(dir)
+
+            # print(f"now checking {dir}, which is {nChar} at {(cnx,cny)}")
+
+            if len(currPath) >= bestLen:
                 break
-            elif n==".":
-                paths[cnx, cny].append(dir)
 
-    dirLen = len(dirString)
-    doesItWork = "YES"
+            if nChar=="B":
+                newPath = currPath + dir
+                newLen = len(newPath) 
 
-    if dirLen==0:
-        doesItWork = "NO"
+                # print(f"newfound path is {currPath}")
 
-    print(doesItWork)
-    print(dirLen)
-    print(dirString)
+                if newLen < bestLen:
+                    bestLen = newLen
+                    bestPath = newPath
+            elif nChar==".":
+                newPath = currPath + dir
+                toVisit = ( (cnx, cny) , newPath )
 
-bfs()
+                # print(f"now appending {toVisit}")
+
+                seen[cnx][cny] = True
+
+                work.append(toVisit)
+
+            # print(f"work so far is {work} \n")
+            # print(f"best path so far is {bestPath} \n")
+
+    return bestPath
+
+ans = "NO"
+shortest = findPath()
+
+if len(shortest) != 0:
+    shortest = findPath()
+    ans = f"YES \n{len(shortest)} \n{shortest}"
+
+print(ans)

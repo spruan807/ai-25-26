@@ -7,16 +7,25 @@ class Board:
         self.grid = []
         self.currH = 0 # current heuristic
         self.numMoves = 0
-        self.pastMoves = deque() # deque of (moveInt, boardList)
-        self.futureMoves = deque() # uhhhhh rethink this
+        self.pastMoves = deque() 
+        self.futureMoves = deque() 
+
+        self.reset()
 
     def move(dir):
+        # takes in a direction
+        # modifies the grid array, currH, and pastMoves to make that move
+        # increments numMoves
+        pass
+    
+    def reset():
+        # generates new game board
         pass
 
     def undo():
         pass
 
-    def  redo():
+    def redo():
         pass
 
 class Strat:
@@ -43,7 +52,7 @@ class Vis:
 
     def drawExtraData(startX, startY, endX, endY):
         # helper for drawUI
-        # disp curr number of moves, curr heuristic below main board
+        # disp curr number of moves, curr heuristic, move history below main board
         pass
 
     def drawBoard(startX, startY, endX, endY):
@@ -56,11 +65,16 @@ class Vis:
         pass
 
 class Test:
-    # what it says on the tin 
     def rep(n):
         pass
 
+class Controls:
+    def run():
+        # runs the visualization, processing key events
+        # History mechanism so you can move backwards and forwards in the list of moves already seen.
+        # Computer single play using “a”.
+        # Computer continuous play (forward/backward) using “f”/“b”.
+        # Pause/resume the animation hitting the space bar.
+        # You can take over play from the point the animation is stopped. (Is this a useful feature?)
 
-
-
-
+        pass

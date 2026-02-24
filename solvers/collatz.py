@@ -1,4 +1,4 @@
-import time, math, cProfile, sys
+import time, math, cProfile, pstats, sys
 from pstats import SortKey
 
 new_limit = 1000
@@ -41,4 +41,11 @@ def dataDisp(n):
     for k,v in times.items():
         print(f"{k}: {v} sec")
 
-dataDisp(1000)
+def dataProfiles(n):
+    global x
+    x = n
+    cProfile.run('runTrials(x)','solvers/profiling/collatz-cache.prof')
+    stat = pstats.Stats('solvers/profiling/collatz-cache.prof')
+    stat.strip_dirs().sort_stats(SortKey.TIME).print_stats(10)
+
+dataProfiles(100000)
